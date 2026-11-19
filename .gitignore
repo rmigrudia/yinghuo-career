@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env*
+*.tsbuildinfo
+
+/.openai/
+*.key
+*.pem
+*.db
+*.sqlite*

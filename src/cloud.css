@@ -1,0 +1,98 @@
+.cloud-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  border-bottom: 1px solid var(--border);
+}
+
+.cloud-topbar > div {
+  max-width: 81rem;
+  margin-inline: auto;
+  padding: .85rem clamp(1rem, 4vw, 3rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .85rem;
+  flex-wrap: wrap;
+}
+
+.cloud-brand, .cloud-topbar nav, .cloud-topbar nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.cloud-brand {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.cloud-topbar nav a {
+  padding: .52rem .67rem;
+  border-radius: .55rem;
+  font-size: .85rem;
+  color: var(--primary);
+}
+
+.cloud-topbar nav a:hover, .cloud-topbar nav a[aria-current] {
+  background: var(--workspace-selection);
+  box-shadow: inset 0 0 0 1px var(--workspace-rim);
+}
+
+.cloud-main {
+  max-width: 81rem;
+  margin-inline: auto;
+  padding: clamp(1.4rem, 5vw, 3.25rem) clamp(1rem, 4vw, 3rem) 6rem;
+}
+
+.catalog-guide {
+  position: fixed;
+  z-index: 35;
+  right: clamp(12px, 2.5vw, 35px);
+  bottom: clamp(12px, 2.5vw, 26px);
+  color: #152d4a;
+}
+
+.catalog-guide-trigger {
+  width: 78px;
+  height: 74px;
+  display: block;
+  margin-left: auto;
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+.catalog-guide-trigger img { transition: transform 180ms ease-out; }
+.catalog-guide-trigger:focus-visible { outline: 2px solid #367dcc; outline-offset: 3px; }
+
+.catalog-guide-panel {
+  width: min(290px, calc(100vw - 26px));
+  border: 1px solid #fff;
+  padding: 1rem;
+  border-radius: 1rem;
+  margin-bottom: .5rem;
+  background: linear-gradient(125deg, #ebf5fff5, #fffaf1f5);
+  box-shadow: 0 9px 28px #253b6829;
+  backdrop-filter: blur(16px);
+  font-size: .9rem;
+}
+
+.catalog-guide-panel header,
+.catalog-guide-shortcuts a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+}
+
+.catalog-guide-panel header button { cursor: pointer; border-radius: .5rem; padding: .2rem; }
+.catalog-guide-panel p { margin-block: .55rem .85rem; }
+.catalog-guide-shortcuts { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; }
+.catalog-guide-shortcuts a { padding: .45rem; border-radius: .45rem; background: #ffffffbb; }
+.catalog-guide-shortcuts a:hover { background: #dbeeff; }
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .catalog-guide-trigger:hover img { transform: perspective(260px) translateY(-2px) rotateY(-6deg); }
+}
