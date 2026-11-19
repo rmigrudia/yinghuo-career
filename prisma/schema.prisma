@@ -1,0 +1,271 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum ApplicationStatus {
+  APPLIED
+  ASSESSMENT
+  INTERVIEW
+  OFFER
+  REJECTED
+  ARCHIVED
+}
+
+model Resume {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  versions ResumeVersion[]
+
+  @@index([updatedAt])
+}
+
+model ResumeVersion {
+  deletedAt DateTime?
+  id        String   @id @default(cuid())
+  name      String
+  summary   String
+  content   Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  resumeId String
+  resume   Resume  @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  jobId    String?
+  job      Job?    @relation(fields: [jobId], references: [id], onDelete: SetNull)
+
+  applications          Application[]
+  interviews            InterviewSession[]
+  interviewPreparations InterviewPreparation[]
+
+  @@index([resumeId])
+  @@index([jobId])
+  @@index([updatedAt])
+}
+
+model Job {
+  id        String    @id @default(cuid())
+  company   String
+  title     String
+  city      String
+  source    String
+  jd        String
+  link      String
+  deadline  DateTime?
+  analysis  Json?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  versions              ResumeVersion[]
+  applications          Application[]
+  interviews            InterviewSession[]
+  interviewPreparations InterviewPreparation[]
+
+  @@index([company])
+  @@index([createdAt])
+}
+
+model Application {
+  deletedAt DateTime?
+  id             String            @id @default(cuid())
+  status         ApplicationStatus @default(APPLIED)
+  /// The date the application was originally submitted.
+  appliedAt      DateTime?
+  /// The date the application entered its current status.
+  stageDate      DateTime?
+  nextFollowUpAt DateTime?
+  notes          String            @default("")
+  interviewRound String            @default("")
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  jobId           String
+  job             Job            @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  resumeVersionId String?
+  resumeVersion   ResumeVersion? @relation(fields: [resumeVersionId], references: [id], onDelete: SetNull)
+
+  @@unique([jobId])
+  @@index([resumeVersionId])
+  @@index([updatedAt])
+}
+
+model InterviewSession {
+  deletedAt DateTime?
+  id                   String    @id @default(cuid())
+  mode                 String    @default("comprehensive")
+  status               String    @default("IN_PROGRESS")
+  context              Json?
+  questions            Json
+  answers              Json
+  feedback             Json
+  currentQuestionIndex Int       @default(0)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  completedAt          DateTime?
+
+  jobId           String?
+  job             Job?           @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  resumeVersionId String?
+  resumeVersion   ResumeVersion? @relation(fields: [resumeVersionId], references: [id], onDelete: SetNull)
+
+  @@index([jobId])
+  @@index([resumeVersionId])
+  @@index([createdAt])
+}
+
+model InterviewPreparation {
+  deletedAt DateTime?
+  id        String   @id @default(cuid())
+  mode      String   @default("comprehensive")
+  context   Json
+  content   Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  jobId           String?
+  job             Job?           @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  resumeVersionId String?
+  resumeVersion   ResumeVersion? @relation(fields: [resumeVersionId], references: [id], onDelete: SetNull)
+
+  @@index([jobId])
+  @@index([resumeVersionId])
+  @@index([createdAt])
+}
+
+model Settings {
+  id               String    @id @default("singleton")
+  aiProvider       String    @default("deepseek")
+  aiModel          String    @default("deepseek-v4-flash")
+  aiBaseUrl        String    @default("https://api.deepseek.com/v1")
+  aiApiKey         String    @default("")
+  aiEnabled        Boolean   @default(true)
+  aiTemperature    Float     @default(0.3)
+  aiLastTestedAt   DateTime?
+  aiLastTestStatus String    @default("untested")
+  sampleDataCleared Boolean  @default(false)
+  updatedAt        DateTime  @updatedAt
+}
+
+model AgentThread {
+  deletedAt DateTime?
+  id        String   @id @default(cuid())
+  title     String   @default("新对话")
+  messages  String   @default("[]")
+  summary   String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([updatedAt])
+}
+
+model TrashSnapshot {
+  id String @id @default(cuid())
+  kind String
+  recordId String
+  name String
+  content Json
+  deletedAt DateTime @default(now())
+  @@index([deletedAt])
+}
+
+enum TeamRole {
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+model TeamWorkspace {
+  id           String            @id @default(cuid())
+  name         String
+  createdAt    DateTime          @default(now())
+  members      TeamMember[]
+  invitations  TeamInvitation[]
+  applications TeamApplication[]
+  activities   TeamActivity[]
+}
+
+model TeamMember {
+  id           String         @id @default(cuid())
+  workspaceId  String
+  handle       String         @unique
+  displayName  String
+  passwordHash String
+  role         TeamRole
+  createdAt    DateTime       @default(now())
+  workspace    TeamWorkspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  sessions     TeamSession[]
+  resumes      TeamResume[]
+  activities   TeamActivity[]
+
+  @@index([workspaceId])
+}
+
+model TeamInvitation {
+  id          String        @id @default(cuid())
+  tokenHash   String        @unique
+  workspaceId String
+  role        TeamRole
+  expiresAt   DateTime
+  usedAt      DateTime?
+  workspace   TeamWorkspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+}
+
+model TeamSession {
+  tokenHash String     @id
+  memberId  String
+  expiresAt DateTime
+  member    TeamMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([memberId, expiresAt])
+}
+
+model TeamResume {
+  id          String     @id @default(cuid())
+  ownerId     String
+  title       String
+  content     String
+  teamVisible Boolean    @default(true)
+  revision    Int        @default(0)
+  updatedAt   DateTime   @updatedAt
+  owner       TeamMember @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId])
+}
+
+model TeamApplication {
+  id          String            @id @default(cuid())
+  workspaceId String
+  company     String
+  title       String
+  status      ApplicationStatus @default(APPLIED)
+  notes       String            @default("")
+  revision    Int               @default(0)
+  deletedAt   DateTime?
+  updatedAt   DateTime          @updatedAt
+  workspace   TeamWorkspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, deletedAt, updatedAt])
+}
+
+model TeamActivity {
+  id          String        @id @default(cuid())
+  workspaceId String
+  actorId     String
+  kind        String
+  target      String
+  changes     Json?
+  createdAt   DateTime      @default(now())
+  workspace   TeamWorkspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  actor       TeamMember    @relation(fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([workspaceId, createdAt, id])
+}

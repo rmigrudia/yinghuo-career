@@ -1,0 +1,167 @@
+.tile {
+  --glass-rim: 255 255 255;
+  --glass-ink: #182238;
+  --glass-label: #34425d;
+  --glass-base: 255 255 255;
+  --glass-light: 88%;
+  --glass-tint: 52%;
+  position: relative;
+  min-width: 0;
+  border-radius: 1rem;
+  text-align: left;
+  perspective: 650px;
+  user-select: none;
+}
+
+.blue {
+  --glass-main: 83 158 250;
+  --glass-accent: 255 221 151;
+  --glass-icon: #2354a0;
+}
+
+.gold {
+  --glass-main: 255 201 106;
+  --glass-accent: 132 184 255;
+  --glass-icon: #734907;
+}
+
+.sky {
+  --glass-main: 107 209 249;
+  --glass-accent: 151 175 255;
+  --glass-icon: #185a91;
+}
+
+.champagne {
+  --glass-main: 244 180 85;
+  --glass-accent: 179 208 255;
+  --glass-icon: #734609;
+}
+
+.surface {
+  display: block;
+  position: relative;
+  height: 100%;
+  min-height: 7rem;
+  border-radius: 1rem;
+  transform-style: preserve-3d;
+  transition: transform 440ms cubic-bezier(.18,.85,.28,1.16);
+  pointer-events: none;
+}
+
+.glass {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border: 1px solid rgb(var(--glass-rim) / 78%);
+  border-radius: inherit;
+  background:
+    radial-gradient(ellipse at 7% -16%, rgb(var(--glass-base) / var(--glass-light)), transparent 70%),
+    radial-gradient(ellipse at 99% 0%, rgb(var(--glass-accent) / var(--glass-tint)), transparent 66%),
+    linear-gradient(140deg, rgb(var(--glass-base) / 34%), rgb(var(--glass-main) / var(--glass-tint)));
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  backdrop-filter: blur(14px) saturate(150%);
+  box-shadow:
+    inset 0 1px 1px rgb(var(--glass-rim) / 90%),
+    inset 0 -1px 1px rgb(var(--glass-main) / 55%),
+    0 1px 2px rgb(30 37 58 / 8%),
+    0 8px 18px -8px rgb(var(--glass-main) / 72%);
+  pointer-events: none;
+}
+
+.glass::before,
+.glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.glass::before {
+  background: radial-gradient(ellipse at var(--metric-light-x, 50%) var(--metric-light-y, 50%),
+    rgb(var(--glass-rim) / 78%), transparent 58%);
+  opacity: 0;
+  transition: opacity 240ms ease-out;
+}
+
+.glass::after {
+  background: linear-gradient(115deg, transparent 15%, rgb(var(--glass-rim) / 68%) 49%, transparent 80%);
+  transform: translateX(-105%);
+}
+
+.content {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "label icon" "value value";
+  align-items: center;
+  gap: .5rem;
+  padding: .8rem .95rem .9rem;
+  transition: transform 360ms ease-out;
+}
+
+.icon {
+  grid-area: icon;
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 1px solid rgb(var(--glass-rim) / 78%);
+  border-radius: .64rem;
+  background: linear-gradient(145deg, rgb(var(--glass-rim) / 72%), rgb(var(--glass-rim) / 24%));
+  box-shadow: inset 0 1px 1px rgb(var(--glass-rim) / 68%), 0 2px 6px rgb(var(--glass-main) / 35%);
+  color: var(--glass-icon);
+}
+
+.value {
+  grid-area: value;
+  color: var(--glass-ink);
+  font-size: 1.85rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.045em;
+  line-height: 1.05;
+}
+
+.label {
+  grid-area: label;
+  color: var(--glass-label);
+  font-size: .8rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+:global(.dark) .tile {
+  --glass-rim: 183 196 227;
+  --glass-base: 29 33 49;
+  --glass-light: 96%;
+  --glass-tint: 26%;
+  --glass-ink: #fff;
+  --glass-label: #e2e7f1;
+}
+
+button.tile:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .tile { cursor: grab; }
+  button.tile { cursor: pointer; }
+  .tile[data-pressed] { cursor: grabbing; z-index: 1; }
+
+  .tile:hover .glass::after {
+    animation: sweep 1.35s cubic-bezier(.19,.65,.28,1) both;
+  }
+
+  .tile[data-pressed] .surface {
+    transform: translateZ(-13px) rotateX(var(--metric-rotate-x)) rotateY(var(--metric-rotate-y));
+    transition: transform 90ms ease-out;
+  }
+
+  .tile[data-pressed] .content {
+    transform: translateZ(12px);
+  }
+
+  .tile[data-pressed] .glass::before { opacity: .85; }
+}
+
+@keyframes sweep {
+  from { transform: translateX(-105%); }
+  to { transform: translateX(105%); }
+}

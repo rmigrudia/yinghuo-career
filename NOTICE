@@ -1,0 +1,43 @@
+LuJie CareerKit
+Copyright 2026 Chozzc
+
+LuJie CareerKit is licensed under the Apache License, Version 2.0.
+
+The resume editor reuses design and implementation ideas from JadeAI:
+https://github.com/LingyiChen-AI/JadeAI
+
+JadeAI is licensed under the Apache License, Version 2.0. A copy of the
+JadeAI license is included at third-party/JadeAI-LICENSE.txt. LuJie CareerKit
+is not affiliated with or endorsed by the JadeAI project maintainers.
+
+Yinghuo Career is a modified distribution based on LuJie CareerKit.
+Modified upstream files (including renamed documentation and removed assets):
+- .github/workflows/docker-image.yml
+- .gitignore
+- NOTICE
+- README.md
+- data/campus/current.json
+- messages/en.json
+- messages/zh-CN.json
+- next.config.ts
+- prisma/schema.prisma
+- src/app/favicon.ico
+- src/app/globals.css
+- src/app/layout.tsx
+- src/app/page.tsx
+- src/components/agent/agent-assistant.tsx
+- src/components/app/app-sidebar.tsx
+- src/components/app/app-topbar.tsx
+- src/components/app/careerkit-app.tsx
+- src/components/campus/campus-workspace.tsx
+- src/components/dashboard/dashboard-workspace.tsx
+- src/components/editor/editor-preview-panel.tsx
+- src/components/editor/editor-sidebar.tsx
+- src/components/library/career-library-workspace.tsx
+- src/components/pipeline/pipeline-workspace.tsx
+- src/components/resume/resume-template-bar.tsx
+- src/components/resume/resume-workbench.tsx
+- src/lib/agent/campus-tools.ts
+- src/lib/campus.test.ts
+- src/lib/campus.ts
+- src/lib/repository.ts

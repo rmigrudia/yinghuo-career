@@ -1,0 +1,47 @@
+{
+	default_sni {$ROXY_WORKSPACE_HOST}
+}
+
+(roxy_tls_domain) {
+}
+
+(roxy_tls_ip) {
+	tls force_automate {
+		issuer acme {
+			profile shortlived
+		}
+	}
+}
+
+(roxy_access_private) {
+	basic_auth {
+		{$ROXY_WORKSPACE_USER} {$ROXY_WORKSPACE_PASSWORD_HASH}
+	}
+}
+
+(roxy_access_public) {
+	@ai_settings_write {
+		path /api/settings/ai /api/settings/ai/*
+		method POST PUT PATCH DELETE
+	}
+	header @ai_settings_write Content-Type "application/json; charset=utf-8"
+	respond @ai_settings_write `{"message":"公开工作区的 AI 连接由管理员配置。"}` 403
+}
+
+https://{$ROXY_WORKSPACE_HOST} {
+	import roxy_tls_{$ROXY_WORKSPACE_TLS_MODE:domain}
+
+	@cross_site_write {
+		method POST PUT PATCH DELETE
+		header Sec-Fetch-Site cross-site
+	}
+	respond @cross_site_write 403
+
+	import roxy_access_{$ROXY_WORKSPACE_ACCESS:private}
+
+	# Keep private pages and API responses out of intermediary caches.
+	header Cache-Control "private, no-store"
+	reverse_proxy workbench:3000 {
+		header_up -Authorization
+	}
+}

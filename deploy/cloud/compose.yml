@@ -1,0 +1,35 @@
+services:
+  workbench:
+    build:
+      context: ../..
+    environment:
+      DATABASE_URL: file:/data/dev.db
+      LUJIE_SETTINGS_SECRET: ${LUJIE_SETTINGS_SECRET:?Set a persistent random settings secret}
+      ROXY_TEAM_SETUP_TOKEN: ${ROXY_TEAM_SETUP_TOKEN:-}
+    volumes:
+      - workbench-data:/data
+    restart: unless-stopped
+
+  gateway:
+    image: caddy:2.11-alpine
+    depends_on:
+      - workbench
+    environment:
+      ROXY_WORKSPACE_HOST: ${ROXY_WORKSPACE_HOST:?Set the workbench hostname}
+      ROXY_WORKSPACE_ACCESS: ${ROXY_WORKSPACE_ACCESS:-private}
+      ROXY_WORKSPACE_TLS_MODE: ${ROXY_WORKSPACE_TLS_MODE:-domain}
+      ROXY_WORKSPACE_USER: ${ROXY_WORKSPACE_USER:?Set the workbench username}
+      ROXY_WORKSPACE_PASSWORD_HASH: ${ROXY_WORKSPACE_PASSWORD_HASH:?Set a bcrypt password hash}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - gateway-data:/data
+      - gateway-config:/config
+    restart: unless-stopped
+
+volumes:
+  workbench-data:
+  gateway-data:
+  gateway-config:
