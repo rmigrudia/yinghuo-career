@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogClose, DialogPortal, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTitle, PopoverTrigger } from "@/components/ui/popover";
-import { campusDeadline, campusQuerySchema, type CampusQuery, type CampusRecord, type CampusCatalogRecord, type CampusResult } from "@/lib/campus";
+import { campusDeadline, campusPostingLinks, campusQuerySchema, type CampusQuery, type CampusRecord, type CampusCatalogRecord, type CampusResult } from "@/lib/campus";
 import { cn } from "@/lib/utils";
 
 const emptyFilters = { q: "", jobTag: "", recruitmentType: "", target: "", location: "", companyType: "", industry: "", exam: "", deadline: "" as CampusQuery["deadline"] };
@@ -58,6 +58,24 @@ function JobTags({ tags, limit = tags.length }: { tags: CampusCatalogRecord["job
       ))}
       {tags.length > limit ? <li className="px-1 py-1 text-xs text-muted-foreground">+{tags.length - limit}</li> : null}
     </ul>
+  );
+}
+
+function PostingLinks({ record }: { record: CampusRecord }) {
+  const t = useTranslations("app.campus");
+  const { applyUrl, noticeUrl, applicationNeedsReview } = campusPostingLinks(record);
+  return (
+    <div className="space-y-2 border-t border-line pt-5">
+      {applyUrl || noticeUrl ? (
+        <div className="flex flex-wrap gap-3">
+          {applyUrl ? <a href={applyUrl} target="_blank" rel="noopener noreferrer" className={buttonVariants({ className: "h-10 px-4" })}>{t("openApplication")}<ArrowUpRight aria-hidden /></a> : null}
+          {noticeUrl ? <a href={noticeUrl} target="_blank" rel="noopener noreferrer" className={buttonVariants({ variant: applyUrl ? "outline" : "default", className: "h-10 px-4" })}>{t("openNotice")}<ArrowUpRight aria-hidden /></a> : null}
+        </div>
+      ) : null}
+      {applicationNeedsReview || (!applyUrl && !noticeUrl) ? (
+        <p className="text-sm text-muted-foreground">{t(applicationNeedsReview ? "applicationNeedsReview" : "noLinks")}</p>
+      ) : null}
+    </div>
   );
 }
 
@@ -251,11 +269,7 @@ function CampusCatalog({ initialQuery, loadCatalog }: { initialQuery: CampusQuer
             </dl>
             <section><h2 className="mb-3 font-semibold">{t("fields.positions")}</h2><p className="whitespace-pre-wrap break-words text-sm leading-7">{selected.positions || t("notProvided")}</p><JobTags tags={selected.jobTags} /></section>
             {selected.reviewNote ? <p className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs leading-6 text-amber-900">{t("reviewNote", { note: selected.reviewNote })}</p> : null}
-            <div className="flex flex-wrap gap-3 border-t border-line pt-5">
-              {selected.applyUrl ? <a href={selected.applyUrl} target="_blank" rel="noopener noreferrer" className={buttonVariants({ className: "h-10 px-4" })}>{t("openApplication")}<ArrowUpRight aria-hidden /></a> : null}
-              {selected.noticeUrl && selected.noticeUrl !== selected.applyUrl ? <a href={selected.noticeUrl} target="_blank" rel="noopener noreferrer" className={buttonVariants({ variant: "outline", className: "h-10 px-4" })}>{t("openNotice")}<ArrowUpRight aria-hidden /></a> : null}
-              {!selected.applyUrl && !selected.noticeUrl ? <p className="text-sm text-muted-foreground">{t("noLinks")}</p> : null}
-            </div>
+            <PostingLinks record={selected} />
             <p className="text-xs leading-6 text-muted-foreground">{t("freshnessNote")}</p>
           </> : null}
         </DialogPrimitive.Popup></DialogPortal>
