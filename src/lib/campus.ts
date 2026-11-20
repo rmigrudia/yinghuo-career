@@ -55,6 +55,31 @@ export type CampusResult = ReturnType<typeof queryCampus>;
 export type CampusCatalogRecord = CampusResult["records"][number];
 export const CAMPUS_PAGE_SIZE = 20;
 
+const generalRecruitingPath = /^(?:\/[a-z]{2}(?:-[a-z]{2})?)?(?:\/(?:home|index(?:\.[a-z0-9]+)?|careers?|recruit(?:ment)?|jobs?|positions?|campus|intern(?:ship)?|list|search))*\/?$/i;
+const postingIdentifier = /^(?:id|(?:job|position|posting|requisition|req|notice|article|campaign|recruit)(?:[_-]?id|[_-]?code))$/i;
+
+function specificRecruitingUrl(value: string | null) {
+  if (!value) return null;
+  const url = new URL(value);
+  const [hashPath, hashQuery] = url.hash.startsWith("#/") ? url.hash.slice(1).split("?", 2) : [];
+  const parameters = [...url.searchParams, ...new URLSearchParams(hashQuery)];
+  const identifiesPosting = parameters.some(([key, value]) => postingIdentifier.test(key) && value.trim());
+  return generalRecruitingPath.test(hashPath ?? url.pathname) && !identifiesPosting ? null : url;
+}
+
+export function campusPostingLinks(record: Pick<CampusRecord, "applyUrl" | "noticeUrl">) {
+  const application = specificRecruitingUrl(record.applyUrl);
+  const notice = specificRecruitingUrl(record.noticeUrl);
+  const articleInApplication = application?.hostname === "mp.weixin.qq.com";
+  const applyUrl = articleInApplication ? null : application?.href ?? null;
+  const noticeUrl = notice?.href ?? (articleInApplication ? application.href : null);
+  return {
+    applyUrl,
+    noticeUrl: noticeUrl === applyUrl ? null : noticeUrl,
+    applicationNeedsReview: Boolean(record.applyUrl && !application),
+  };
+}
+
 export function chinaDate(now = new Date()) {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
 }

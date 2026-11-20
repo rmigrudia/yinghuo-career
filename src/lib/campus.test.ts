@@ -6,7 +6,7 @@ import { readFile, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { campusDatasetSchema } from "./campus-dataset.mjs";
-import { campusDeadline, campusQuerySchema, chinaDate, queryCampus, type CampusDataset, type CampusRecord } from "./campus";
+import { campusDeadline, campusPostingLinks, campusQuerySchema, chinaDate, queryCampus, type CampusDataset, type CampusRecord } from "./campus";
 import { GET } from "@/app/api/campus/route";
 import { searchCampus } from "@/lib/agent/campus-tools";
 
@@ -51,6 +51,31 @@ describe("campus catalog", () => {
     const published = JSON.parse(readFileSync(new URL("../../data/campus/current.json", import.meta.url), "utf8"));
     expect(published).not.toHaveProperty("sourceUrl");
     expect(campusDatasetSchema.parse(published).records.length).toBeGreaterThan(0);
+  });
+
+  it.each([
+    "https://example.com/",
+    "https://example.com/?utm_source=catalog",
+    "https://example.com/zh-cn/campus/jobs/",
+    "https://example.com/#/job/list",
+  ])("prefers the original notice over the generic application page %s", (applyUrl) => {
+    const noticeUrl = "https://example.com/notice/123";
+    expect(campusPostingLinks({ applyUrl, noticeUrl })).toEqual({ applyUrl: null, noticeUrl, applicationNeedsReview: true });
+  });
+
+  it.each([
+    "https://example.com/apply",
+    "https://example.com/jobs/AB",
+    "https://example.com/jobs?jobId=3912",
+    "https://example.com/#/jobs?position_id=3912",
+  ])("keeps an application form or an address with a posting identifier: %s", (applyUrl) => {
+    expect(campusPostingLinks({ applyUrl, noticeUrl: applyUrl })).toEqual({ applyUrl, noticeUrl: null, applicationNeedsReview: false });
+  });
+
+  it("labels WeChat articles as announcements and leaves homepages without a confirmed action", () => {
+    const article = "https://mp.weixin.qq.com/s/example";
+    expect(campusPostingLinks({ applyUrl: article, noticeUrl: null })).toEqual({ applyUrl: null, noticeUrl: article, applicationNeedsReview: false });
+    expect(campusPostingLinks({ applyUrl: "https://example.com/", noticeUrl: "https://example.com/home" })).toEqual({ applyUrl: null, noticeUrl: null, applicationNeedsReview: true });
   });
 
   it("sorts dates in both directions with unknown dates last and filters deadline states", () => {
@@ -177,6 +202,13 @@ describe("read-only campus API", () => {
     expect(new URL(result.records[0].href, "http://localhost").searchParams.get("recordId")).toBe(record.id);
     expect(result.records[0]).not.toHaveProperty("sourceRows");
     expect(JSON.stringify(result)).not.toMatch(/sourceUrl|sourceName|preparedAt|internal-source/);
+  });
+
+  it("gives the Agent the original announcement when the application URL is a homepage", async () => {
+    const noticeUrl = "https://example.com/notice/123";
+    vi.mocked(readFile).mockResolvedValue(JSON.stringify({ ...dataset, records: [{ ...record, applyUrl: "https://example.com/", noticeUrl }] }));
+    const result = await searchCampus({ recordId: record.id });
+    expect(result.records[0]).toMatchObject({ applyUrl: null, noticeUrl, applicationNeedsReview: true });
   });
 
   it("paginates Agent summaries across all matches and reads full positions on demand", async () => {

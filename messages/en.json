@@ -118,6 +118,7 @@
       "reviewNote": "Source fields to verify: {note}",
       "openApplication": "Open application link",
       "openNotice": "View announcement",
+      "applicationNeedsReview": "The application link is unverified.",
       "noLinks": "No application or announcement links are available."
     },
     "navGroups": {

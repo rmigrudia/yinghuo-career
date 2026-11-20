@@ -1,6 +1,6 @@
 // Modified for the Roxy Career web edition.
 import { z } from "zod";
-import { campusDeadline, campusQuerySchema, chinaDate, queryCampus } from "@/lib/campus";
+import { campusDeadline, campusPostingLinks, campusQuerySchema, chinaDate, queryCampus } from "@/lib/campus";
 import { readCampusDataset } from "@/lib/campus-store";
 
 export const campusSearchSchema = campusQuerySchema.extend({
@@ -50,7 +50,7 @@ export async function searchCampus(input: z.input<typeof campusSearchSchema>, to
       deadlineRaw: record.deadlineRaw,
       updatedAt: record.updatedAt,
       reviewNote: record.reviewNote,
-      ...(query.recordId ? { applyUrl: record.applyUrl, noticeUrl: record.noticeUrl } : {}),
+      ...(query.recordId ? campusPostingLinks(record) : {}),
       href: `/campus?recordId=${encodeURIComponent(record.id)}`,
     })),
   };
