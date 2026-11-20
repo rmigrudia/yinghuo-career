@@ -625,6 +625,13 @@
     }
   },
   "pipeline": {
+    "demo": {
+      "badge": "Sample application",
+      "openNotice": "View recruitment notice",
+      "deadline": "Deadline: {date}",
+      "endOfNovember": "End of November 2026",
+      "checkNotice": "See the original notice"
+    },
     "list": {
       "search": "Search companies or roles",
       "clearSearch": "Clear search",
@@ -655,6 +662,7 @@
       "zhaopin": "Zhaopin",
       "51job": "51job",
       "official": "Official site",
+      "university": "University career site",
       "referral": "Referral",
       "email": "Email",
       "other": "Other"

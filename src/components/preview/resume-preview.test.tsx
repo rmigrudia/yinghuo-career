@@ -34,8 +34,14 @@ describe("ResumePreview", () => {
   });
 
   it("renders saved compact sections and all entry logos in every template", () => {
-    const source = sampleResumeVersions.find((version) => version.id === "rv-baidu-ai-original")!.content;
-    const original = contentToJadeResume({ ...source, awards: ["优秀学生干部", "校级一等奖学金"] });
+    const source = sampleResumeVersions[0].content;
+    const original = contentToJadeResume({
+      ...source,
+      editor: { ...source.editor, sections: undefined },
+      education: [{ ...source.education[0], gpa: "3.8/4.0", start: "2023", end: "2027" }],
+      experiences: source.internships,
+      awards: ["优秀学生干部", "校级一等奖学金"],
+    });
     const work = original.sections.find((section) => section.type === "work_experience")!.content as WorkExperienceContent;
     const internship = original.sections.find((section) => section.type === "internship_experience")!.content as WorkExperienceContent;
     const projects = original.sections.find((section) => section.type === "projects")!.content as ProjectsContent;
@@ -66,7 +72,7 @@ describe("ResumePreview", () => {
     const originalDate = defaultLayout.match(/<span[^>]*>2023 – 2027<\/span>/)?.[0];
     expect(originalDate).toBeTruthy();
     expect(compact).toContain(originalDate);
-    expect(defaultLayout).toContain("<b>人工智能</b>");
+    expect(defaultLayout).toContain("<b>新闻学</b>");
     expect(defaultLayout).not.toContain("<b>本科</b>");
     expect(defaultLayout).toContain('data-resume-field-bold="true"');
     expect(defaultLayout).not.toContain('data-education-gpa-inline="true"');
@@ -74,7 +80,7 @@ describe("ResumePreview", () => {
     for (const template of TEMPLATES) {
       const markup = renderToStaticMarkup(<ResumePreview resume={{ ...reopened, template }} mode="export" />);
       expect(markup.match(/data-entry-logo="true"/g), template).toHaveLength(3);
-      expect(markup, template).toContain("<b>人工智能</b>");
+      expect(markup, template).toContain("<b>新闻学</b>");
       expect(markup, template).toContain('data-resume-field-bold="true"');
       expect(markup, template).toContain('data-resume-compact-list="true"');
       const education = reopened.sections.find((section) => section.type === "education")!;
@@ -85,12 +91,12 @@ describe("ResumePreview", () => {
       expect(gpaStyle, template).toBeTruthy();
       expect(markup, template).toContain('<span' + gpaStyle + ' data-education-gpa-inline="true"><b>GPA: 3.8/4.0</b>');
       expect(markup.match(/GPA: 3\.8\/4\.0/g), template).toHaveLength(1);
-      expect(markup, template).toMatch(/人工智能<\/b>[\s\S]{0,450} - [\s\S]{0,250}北京邮电大学/);
+      expect(markup, template).toMatch(/新闻学<\/b>[\s\S]{0,450} - [\s\S]{0,250}嘉应学院/);
     }
   });
 
   it("omits separators and inferred dates for incomplete education entries", () => {
-    const source = sampleResumeVersions.find((version) => version.id === "rv-baidu-ai-original")!.content;
+    const source = sampleResumeVersions[0].content;
     const draft = contentToJadeResume(source);
     const education = draft.sections.find((section) => section.type === "education")!;
     const item = (education.content as EducationContent).items[0];
@@ -98,8 +104,8 @@ describe("ResumePreview", () => {
     education.content.inlineLayout = true;
     for (const template of TEMPLATES) {
       const markup = renderToStaticMarkup(<ResumePreview resume={{ ...draft, template, sections: [education] }} />);
-      expect(markup, template).not.toMatch(/至今|Present| - <span data-education-regular="true">北京邮电大学/);
-      expect(markup, template).toContain("北京邮电大学");
+      expect(markup, template).not.toMatch(/至今|Present| - <span data-education-regular="true">嘉应学院/);
+      expect(markup, template).toContain("嘉应学院");
     }
     item.endDate = "2027-06";
     const endOnly = renderToStaticMarkup(<ResumePreview resume={{ ...draft, template: "academic", sections: [education] }} />);
@@ -107,7 +113,8 @@ describe("ResumePreview", () => {
   });
 
   it("limits layout controls and renders independent certificate emphasis in every template", () => {
-    const draft = contentToJadeResume({ ...sampleResumeVersions[0].content, awards: ["示例证书", "另一张证书"] });
+    const source = sampleResumeVersions[0].content;
+    const draft = contentToJadeResume({ ...source, editor: { ...source.editor, sections: undefined }, awards: ["示例证书", "另一张证书"] });
     const certificates = draft.sections.find((section) => section.type === "certifications")!;
     expect(draft.sections.filter((section) => supportsInlineLayout(section.type)).map((section) => section.type).sort())
       .toEqual(["certifications", "education"]);

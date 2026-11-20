@@ -625,6 +625,13 @@
     }
   },
   "pipeline": {
+    "demo": {
+      "badge": "模拟投递",
+      "openNotice": "查看招聘公告",
+      "deadline": "截止时间：{date}",
+      "endOfNovember": "2026 年 11 月底",
+      "checkNotice": "以原公告为准"
+    },
     "list": {
       "search": "搜索公司或岗位",
       "clearSearch": "清除搜索关键词",
@@ -663,6 +670,7 @@
       "zhaopin": "智联招聘",
       "51job": "前程无忧",
       "official": "企业官网",
+      "university": "高校就业网",
       "referral": "内推",
       "email": "邮件",
       "other": "其他"

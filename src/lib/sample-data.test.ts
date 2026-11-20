@@ -5,13 +5,16 @@ import { normalizeResumeContent } from "./resume-content";
 import { interviewReportSchema } from "./interview";
 import { interviewPreparationSchema } from "./interview-preparation";
 import {
-  sampleApplications,
+  buildSampleAnswers,
+  buildSampleApplications,
   sampleInterviewPreparation,
   sampleInterviewSession,
   sampleJobs,
   sampleResumeVersions,
   sampleTailoredResumeVersion,
 } from "./sample-data";
+
+const sampleSeedDate = new Date("2026-11-18T19:00:00.000Z");
 
 describe("sample resume versions", () => {
   it("provides complete, distinct public resume examples", () => {
@@ -30,22 +33,32 @@ describe("sample resume versions", () => {
       expect(version.content.internships.length).toBeGreaterThan(0);
       expect(version.content.projects.length).toBeGreaterThan(0);
       expect(version.content.skills.length).toBeGreaterThan(0);
-      expect(version.content.selfReview).toBeTruthy();
+      expect(version.content.profile.summary).toContain("演示简历 · 人物与经历为虚构");
     }
   });
 
-  it("keeps the sample GPA in its education field after saving and reopening", () => {
-    const source = sampleResumeVersions.find((version) => version.id === "rv-baidu-ai-original")!.content;
+  it("retains the demonstration profile after saving and reopening", () => {
+    const source = sampleResumeVersions[0].content;
     const saved = jadeResumeToContent(contentToJadeResume(normalizeResumeContent(source)));
-    expect(saved.education[0].gpa).toBe("3.8/4.0");
-    expect(saved.education[0].highlights).toEqual(["核心课程：数据结构、数据库、机器学习、软件工程"]);
+    expect(saved.basics).toMatchObject({ name: "唐铭轩", email: "xxx@163.com", phone: "" });
+    expect(saved.education[0]).toMatchObject({ school: "嘉应学院", degree: "本科", major: "新闻学" });
+    expect(saved.editor?.sections?.find(({ type }) => type === "personal_info")?.content).toMatchObject({
+      gender: "男", age: "22 岁",
+    });
+    expect(saved.profile.summary).toContain("演示简历 · 人物与经历为虚构");
   });
 
-  it("spreads sample job sources across common channels", () => {
-    expect(new Set(sampleJobs.map((job) => job.source)).size).toBeGreaterThanOrEqual(5);
+  it("links all three Pearl River Delta jobs to their university recruitment notices", () => {
+    expect(sampleJobs.map(({ city }) => city)).toEqual(["佛山顺德", "广州天河", "深圳"]);
+    expect(sampleJobs.map(({ link }) => new URL(link!).host)).toEqual([
+      "career.cuhk.edu.cn", "jy.gzhu.edu.cn", "51uns.bysjy.com.cn",
+    ]);
+    expect(sampleJobs[0]).toMatchObject({ deadline: null, deadlineNotice: "endOfNovember" });
+    expect(sampleJobs.every(({ deadline }) => deadline === null)).toBe(true);
   });
 
   it("provides a complete and internally linked demo workflow", () => {
+    const sampleApplications = buildSampleApplications(sampleSeedDate);
     const jobIds = new Set(sampleJobs.map((job) => job.id));
     const versionIds = new Set([
       ...sampleResumeVersions.map((version) => version.id),
@@ -54,13 +67,10 @@ describe("sample resume versions", () => {
 
     expect(sampleJobs.every((job) => job.city && job.link && !job.jd.includes("暂未补充"))).toBe(true);
     expect(sampleApplications.every((application) => jobIds.has(application.jobId))).toBe(true);
-    expect(
-      sampleApplications.every((application) =>
-        [application.appliedAt, application.stageDate, application.nextFollowUpAt]
-          .filter(Boolean)
-          .every((date) => /^2026-(09|11|12)-\d{2}$/.test(date ?? "")),
-      ),
-    ).toBe(true);
+    expect(sampleApplications.map(({ status }) => status)).toEqual(["INTERVIEW", "APPLIED", "ARCHIVED"]);
+    expect(sampleApplications[0].stageDate).toBe("2026-11-21");
+    expect(sampleApplications[1].nextFollowUpAt).toBe("2026-11-23");
+    expect(buildSampleApplications(sampleSeedDate)).toEqual(sampleApplications);
     expect(
       sampleApplications.every(
         (application) => application.resumeVersionId === null || versionIds.has(application.resumeVersionId),
@@ -71,7 +81,7 @@ describe("sample resume versions", () => {
     expect(sampleInterviewSession.jobId).toBe(sampleTailoredResumeVersion.jobId);
     expect(interviewPreparationSchema.safeParse(sampleInterviewPreparation.content).success).toBe(true);
     expect(sampleInterviewSession.questions).toHaveLength(8);
-    expect(Object.keys(sampleInterviewSession.answers)).toHaveLength(sampleInterviewSession.questions.length);
+    expect(Object.keys(buildSampleAnswers(sampleSeedDate))).toHaveLength(sampleInterviewSession.questions.length);
     expect(sampleInterviewSession.feedback.questionReviews).toHaveLength(sampleInterviewSession.questions.length);
     expect(interviewReportSchema.safeParse(sampleInterviewSession.feedback).success).toBe(true);
   });

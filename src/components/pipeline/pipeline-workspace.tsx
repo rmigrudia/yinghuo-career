@@ -346,7 +346,10 @@ function PipelineList({ applications, jobById, ascending, onSort, onEditApplicat
                     <span className="truncate">{company}</span><ChevronRight aria-hidden className="size-3.5 shrink-0 text-muted-foreground" />
                   </button>
                 </td>
-                <td className="truncate" title={role}>{role}</td>
+                <td className="truncate" title={role}>
+                  {role}
+                  {application.isSample && <span className="ml-1.5 text-xs text-muted-foreground">{t("demo.badge")}</span>}
+                </td>
                 <td><span title={stage} className={cn("block w-fit max-w-full truncate rounded-full px-2 py-0.5 text-xs font-medium", stagePillClass[application.status])}>
                   {stage}
                 </span></td>
@@ -775,6 +778,7 @@ function PipelineApplicationCard({
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold">{job?.company ?? t("card.unknownCompany")}</p>
           <p className="mt-0.5 text-xs text-muted-foreground">{job?.title ?? t("card.unknownTitle")}</p>
+          {application.isSample && <p className="mt-1 text-xs font-medium text-primary">{t("demo.badge")}</p>}
         </div>
         <button
           type="button"
@@ -924,6 +928,7 @@ function PipelineEditDialogContent({
             <p className="mt-1 text-sm text-muted-foreground">
               {t("edit.description")}
             </p>
+            {application.isSample && <p className="mt-2 text-sm font-medium text-primary">{t("demo.badge")}</p>}
           </div>
           <button
             type="button"
@@ -976,6 +981,14 @@ function PipelineEditDialogContent({
 
           <FormField label={t("fields.link")} optional>
             <Input name="link" defaultValue={job.link ?? ""} placeholder={t("placeholders.link")} />
+            {application.isSample && /^https?:\/\//i.test(job.link) && (
+              <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                <a href={job.link} target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2">
+                  {t("demo.openNotice")}
+                </a>
+                <span>{t("demo.deadline", { date: job.deadline ?? t(job.sampleDeadline ? "demo.endOfNovember" : "demo.checkNotice") })}</span>
+              </div>
+            )}
           </FormField>
           <FormField label={t("fields.notes")} optional>
             <textarea
@@ -1177,6 +1190,7 @@ function sourceKey(source: string) {
       智联招聘: "zhaopin",
       前程无忧: "51job",
       企业官网: "official",
+      高校就业网: "university",
       内推: "referral",
       邮件: "email",
       其他: "other",

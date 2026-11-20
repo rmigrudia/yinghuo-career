@@ -41,3 +41,12 @@ Modified upstream files (including renamed documentation and removed assets):
 - src/lib/campus.test.ts
 - src/lib/campus.ts
 - src/lib/repository.ts
+- prisma/migrations/20261119120000_refresh_yinghuo_demo/migration.sql
+- src/components/app/types.ts
+- src/components/preview/resume-preview.test.tsx
+- src/components/resume/resume-workbench-export.test.ts
+- src/lib/pipeline.ts
+- src/lib/repository.clear-sample-data.test.ts
+- src/lib/repository.interview-job.test.ts
+- src/lib/sample-data.test.ts
+- src/lib/sample-data.ts

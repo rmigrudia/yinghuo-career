@@ -4,7 +4,7 @@ const db = vi.hoisted(() => ({
   $transaction: vi.fn(),
   trashSnapshot: { create: vi.fn() },
   resume: { findFirst: vi.fn() },
-  settings: { upsert: vi.fn(), update: vi.fn() },
+  settings: { findUnique: vi.fn(), upsert: vi.fn(), update: vi.fn() },
   job: { findUnique: vi.fn(), findFirst: vi.fn(), create: vi.fn() },
   interviewSession: { create: vi.fn(), findUniqueOrThrow: vi.fn(), findUnique: vi.fn(), update: vi.fn(), delete: vi.fn() },
 }));
@@ -20,6 +20,7 @@ describe("interview job attribution", () => {
     db.$transaction.mockImplementation(async (fn) => fn(db));
     db.interviewSession.findUniqueOrThrow.mockImplementation((args) => db.interviewSession.findUnique(args));
     db.resume.findFirst.mockResolvedValue({ id: "resume-1" });
+    db.settings.findUnique.mockResolvedValue({ sampleDataCleared: false, sampleDataRevision: 1 });
     db.settings.upsert.mockResolvedValue({
       aiProvider: "openai",
       aiModel: "gpt-4o-mini",

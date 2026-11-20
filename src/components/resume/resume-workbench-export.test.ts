@@ -18,11 +18,14 @@ describe("editable resume Word export", () => {
     { language: "zh", current: false, endDate: null, endLabel: "" },
     { language: "zh", current: true, endDate: "2026-10", endLabel: "2026-10" },
   ] as const)("preserves education and work dates in $language DOCX bytes (current=$current, end=$endDate)", async ({ language, current, endDate, endLabel }) => {
-    const source = sampleResumeVersions.find((version) => version.id === "rv-baidu-ai-original")!.content;
+    const source = sampleResumeVersions[0].content;
     const resume = contentToJadeResume(source);
     resume.language = language;
-    const work = resume.sections.find((section) => section.type === "work_experience")!.content as WorkExperienceContent;
+    const work = resume.sections.find((section) => section.type === "internship_experience")!.content as WorkExperienceContent;
+    const secondInternship = { ...work.items[0], id: "date-check", startDate: "2025-06", endDate: "2025-09" };
+    work.items.push(secondInternship);
     work.items[0].current = current;
+    work.items[0].startDate = "2024-10";
     work.items[0].endDate = endDate;
     let exportedBlob: Blob | undefined;
     const link = { click: vi.fn(), remove: vi.fn(), href: "", download: "" };
@@ -40,11 +43,12 @@ describe("editable resume Word export", () => {
     const text = await extractWordText(Buffer.from(await exportedBlob!.arrayBuffer()));
 
     expect(link.click).toHaveBeenCalledOnce();
-    expect(link.download).toBe("姜禾的简历.docx");
-    expect(text).toContain("北京邮电大学 | 本科 | 人工智能");
+    expect(link.download).toBe("唐铭轩的演示简历.docx");
+    expect(text).toContain("嘉应学院 | 本科 | 新闻学");
+    expect(text).toContain("男 | 22 岁 | xxx@163.com");
+    expect(text).toContain("演示简历 · 人物与经历为虚构");
     expect(text).toContain(`2024-10${endLabel ? ` - ${endLabel}` : ""}\n`);
     if (!current || endDate) expect(text).not.toMatch(/至今|Present/);
     expect(text).toContain("2025-06 - 2025-09");
-    expect(text.match(/github\.com\/jianghe/g)).toHaveLength(1);
   });
 });

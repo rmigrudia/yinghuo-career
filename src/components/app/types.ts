@@ -6,6 +6,7 @@ import type { ApplicationStatus, InterviewRound, JobAnalysis, ResumeContent } fr
 export type JobView = {
   id: string;
   isSample?: boolean;
+  sampleDeadline?: "endOfNovember";
   company: string;
   title: string;
   city: string;
@@ -20,6 +21,7 @@ export type JobView = {
 
 export type ApplicationView = {
   id: string;
+  isSample?: boolean;
   jobId: string;
   status: ApplicationStatus;
   interviewRound: InterviewRound;

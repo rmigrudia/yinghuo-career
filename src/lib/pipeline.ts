@@ -57,6 +57,7 @@ export const applicationSourceOptions = [
   "智联招聘",
   "前程无忧",
   "企业官网",
+  "高校就业网",
   "内推",
   "邮件",
   "其他",

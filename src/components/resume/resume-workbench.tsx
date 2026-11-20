@@ -1166,6 +1166,8 @@ export async function exportResumeAsEditableDocx(resume: Resume) {
   const jobTitle = getString(personal.jobTitle);
   const docxTheme = buildDocxThemeConfig(resume.themeConfig);
   const contacts = [...new Set([
+    getString(personal.gender),
+    getString(personal.age),
     getString(personal.email),
     getString(personal.phone),
     getString(personal.location),

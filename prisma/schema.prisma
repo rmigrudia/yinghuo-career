@@ -150,6 +150,7 @@ model Settings {
   aiLastTestedAt   DateTime?
   aiLastTestStatus String    @default("untested")
   sampleDataCleared Boolean  @default(false)
+  sampleDataRevision Int     @default(0)
   updatedAt        DateTime  @updatedAt
 }
 

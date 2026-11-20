@@ -1,0 +1,1 @@
+ALTER TABLE "Settings" ADD COLUMN "sampleDataRevision" INTEGER NOT NULL DEFAULT 0;
