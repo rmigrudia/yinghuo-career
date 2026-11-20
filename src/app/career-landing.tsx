@@ -199,7 +199,14 @@ export function CareerLanding({ catalogOnly = false }: { catalogOnly?: boolean }
           <div className={styles.dock}>
             <span className={styles.destinationIcon}><MapPin size={20} aria-hidden /></span>
             <span className={styles.currentCity} aria-live="polite"><strong>{city.name}</strong><small>{city.landmark}</small></span>
-            <a href="#workflow" className={styles.scrollCta} onPointerMove={tiltGlass} onPointerLeave={resetGlass}>{catalogOnly ? "探索招聘机会" : "进入求职流程"} <ArrowDown size={18} aria-hidden /></a>
+            <a href="#workflow" className={styles.scrollCta}>
+              <span className={styles.scrollCtaWindow}>
+                <span className={styles.scrollCtaLabel}>
+                  {catalogOnly ? "探索招聘机会" : "进入求职流程"}
+                  <ArrowDown size={18} aria-hidden />
+                </span>
+              </span>
+            </a>
           </div>
         </div>
       </section>

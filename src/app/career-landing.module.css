@@ -44,7 +44,7 @@
   backdrop-filter: blur(14px);
 }
 
-.brand, .navLinks, .navAction, .scrollCta, .allJobs, .footer a {
+.brand, .navLinks, .navAction, .allJobs, .footer a {
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -283,8 +283,60 @@
 .currentCity { display: grid; gap: 3px; flex: 1; min-width: 0; line-height: 1.3; }
 .currentCity strong { font-size: 18px; }
 .currentCity small { font-size: 12px; color: #5e5350; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.scrollCta { justify-content: center; flex-shrink: 0; border-radius: 15px; background: #203f3a; color: #fffdf8; padding: 14px 18px; font-size: 14px; font-weight: 650; transition: background .22s; }
-.scrollCta:hover { background: #326558; }
+.scrollCta {
+  --cta-ink: #213956;
+  --cta-fill: #fff8ef;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-height: 48px;
+  padding: 0 20px;
+  border: 1px solid #b98a57;
+  border-radius: 999px;
+  background: var(--cta-fill);
+  color: var(--cta-ink);
+  box-shadow: inset 0 1px #fff, 0 4px 12px #784a2521;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: color .12s ease .12s, border-color .22s ease;
+}
+
+.scrollCta::before, .scrollCta::after {
+  content: "";
+  position: absolute;
+  inset-block: -1px;
+  width: 72%;
+  pointer-events: none;
+  background: var(--cta-ink);
+  transition: transform .24s var(--ease);
+}
+
+.scrollCta::before { left: -12%; transform: translateY(-102%) skewX(-24deg); }
+.scrollCta::after { right: -12%; transform: translateY(102%) skewX(-24deg); }
+.scrollCtaWindow { position: relative; z-index: 1; overflow: hidden; }
+.scrollCtaLabel { display: flex; align-items: center; gap: 10px; line-height: 1.5; }
+.scrollCtaLabel svg { flex: none; }
+
+.scrollCta:is(:focus-visible, :active) { color: var(--cta-fill); border-color: var(--cta-ink); transition-delay: 0s; }
+.scrollCta:is(:focus-visible, :active)::before,
+.scrollCta:is(:focus-visible, :active)::after { transform: skewX(-24deg); transition-duration: 0s; }
+
+@media (hover: hover) and (pointer: fine) {
+  .scrollCta:hover { color: var(--cta-fill); border-color: var(--cta-ink); }
+  .scrollCta:hover::before, .scrollCta:hover::after { transform: skewX(-24deg); }
+  .scrollCta:hover .scrollCtaLabel { animation: scroll-cta-roll .32s ease-in-out; }
+}
+
+@keyframes scroll-cta-roll {
+  0%, 100% { transform: translateY(0); }
+  48% { transform: translateY(104%); }
+  49% { transform: translateY(-104%); }
+}
 
 .section { width: min(100%, 1660px); margin-inline: auto; padding: 64px var(--gutter) 0; scroll-margin-top: 74px; }
 .sectionHeading { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 10px 24px; margin-bottom: 24px; }
@@ -309,7 +361,7 @@
   transition: transform .34s var(--out), box-shadow .3s;
 }
 @media (hover: hover) and (pointer: fine) {
-  .step:hover, .cityCard:hover, .navAction:hover, .scrollCta:hover, .allJobs:hover {
+  .step:hover, .cityCard:hover, .navAction:hover, .allJobs:hover {
     transform: perspective(900px) translateY(-4px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
   }
 
@@ -343,7 +395,7 @@
 .cardArrow { position: absolute; z-index: 1; right: 12px; bottom: 14px; display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid #fff9; border-radius: 50%; color: white; background: #253c3e60; backdrop-filter: blur(12px) saturate(150%); box-shadow: inset 0 1px 1px #fff6, 0 6px 18px #16262640; }
 
 /* Translucent controls stay readable over the city and the warm page surface. */
-.navAction, .scrollCta, .allJobs {
+.navAction, .allJobs {
   transition: transform .32s var(--out), background .25s, box-shadow .25s;
   backdrop-filter: blur(14px) saturate(150%);
   box-shadow: inset 0 1px 1px #fff6, 0 6px 17px #2637301a;
@@ -354,11 +406,6 @@
   border-color: #ffffff8a;
 }
 .nav[data-solid="true"] .navAction { background: #fff8; border-color: #203f3a40; }
-.scrollCta {
-  background: linear-gradient(135deg, #446c62eb, #1d3c37f7);
-  border: 1px solid #ffffff57;
-}
-.scrollCta:hover { background: linear-gradient(135deg, #557f73, #225149); }
 .allJobs { background: #fff8; }
 
 .footer { display: flex; justify-content: space-between; align-items: center; padding: 18px var(--gutter); gap: 12px; border-top: 1px solid #72594a30; font-size: 13px; }
@@ -399,7 +446,8 @@
   .destinationIcon svg { width: 16px; }
   .currentCity strong { font-size: 15px; }
   .currentCity small { font-size: 10px; }
-  .scrollCta { padding: 12px 9px; border-radius: 11px; gap: 4px; font-size: 12px; }
+  .scrollCta { min-height: 44px; padding-inline: 12px; font-size: 12px; }
+  .scrollCtaLabel { gap: 6px; }
   .scrollCta svg { width: 14px; }
   .section { padding-top: 45px; scroll-margin-top: 60px; }
   .stepArrow { top: 14px; right: 12px; }
@@ -423,5 +471,5 @@
   .topCloud, .wipeMist, .outgoing { display: none; }
   .rail { opacity: 1; transform: translateX(-50%); }
   .incoming { mask-image: none; }
-  .page .step, .page .cityCard, .page .cityCard img, .page .navAction, .page .scrollCta, .page .allJobs, .page .thumb { transform: none; }
+  .page .step, .page .cityCard, .page .cityCard img, .page .navAction, .page .allJobs, .page .thumb { transform: none; }
 }
