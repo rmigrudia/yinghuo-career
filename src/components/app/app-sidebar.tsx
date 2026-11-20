@@ -29,11 +29,11 @@ export function AppSidebar({
     >
       <div className="mb-8 flex flex-col items-center">
         <div className="flex items-center justify-center gap-3">
-          <Image src="/brand/roxy-career.svg" alt="" width={44} height={44} className="shrink-0" priority />
+          <Image src="/brand/firefly-mark.png" alt="" width={48} height={48} unoptimized className="shrink-0" priority />
           <p className="font-serif text-3xl font-semibold leading-none tracking-normal text-primary">{t("brandName")}</p>
         </div>
         <p className="mt-2 text-[0.625rem] font-medium uppercase tracking-[0.28em] text-muted-foreground">
-          Yinghuo Career
+          Firefly Career
         </p>
       </div>
 

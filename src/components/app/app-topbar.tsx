@@ -60,7 +60,7 @@ export function AppTopbar({
       <div className="flex flex-wrap items-center justify-between gap-2 lg:flex-nowrap">
         <div className="flex min-w-0 items-center gap-2 lg:hidden">
           <div className="flex shrink-0 items-center gap-2">
-            <Image src="/brand/roxy-career.svg" alt="" width={28} height={28} className="shrink-0" priority />
+            <Image src="/brand/firefly-mark.png" alt="" width={32} height={32} unoptimized className="shrink-0" priority />
             <span className="font-serif text-xl font-semibold text-primary">{t("brandName")}</span>
           </div>
           <select

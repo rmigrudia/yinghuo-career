@@ -12,9 +12,9 @@ export const metadata: Metadata = {
   title: "萤火职航工作台",
   description: "查找校招与实习机会，准备简历、跟踪投递并备战面试。",
   icons: {
-    icon: "/brand/roxy-career.svg",
-    shortcut: "/brand/roxy-career.svg",
-    apple: "/brand/roxy-career.svg",
+    icon: "/brand/firefly-mark.png",
+    shortcut: "/brand/firefly-mark.png",
+    apple: "/brand/firefly-mark.png",
   },
 };
 

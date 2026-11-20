@@ -156,8 +156,11 @@ export function CareerLanding({ catalogOnly = false }: { catalogOnly?: boolean }
     <main ref={root} className={styles.page} lang="zh-CN">
       <header className={styles.nav} data-solid={scrolled}>
         <a href="#top" className={styles.brand} aria-label="萤火职航，返回顶部">
-          <Image src="/brand/roxy-career.svg" width={32} height={32} alt="" />
-          <span className={styles.brandChinese}>萤火职航</span>
+          <Image src="/brand/firefly-mark.png" width={40} height={40} alt="" unoptimized />
+          <span className={styles.brandWordmark}>
+            <span className={styles.brandChinese}>萤火职航</span>
+            <span className={styles.brandEnglish}>Firefly Career</span>
+          </span>
         </a>
         <nav className={styles.navLinks} aria-label="首页导航">
           <a href="#cities">探索城市</a>

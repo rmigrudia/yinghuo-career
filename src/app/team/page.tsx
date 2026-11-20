@@ -85,7 +85,7 @@ export default async function TeamPage({ searchParams }: { searchParams: Promise
     return (
       <main className={styles.page} lang="zh-CN">
         <div className={styles.shell}>
-          <header className={styles.topbar}><Link href="/" className={styles.brand}><Image src="/brand/roxy-career.svg" width={35} height={35} alt="" />萤火职航</Link></header>
+          <header className={styles.topbar}><Link href="/" className={styles.brand}><Image src="/brand/firefly-mark.png" width={40} height={40} alt="" unoptimized />萤火职航</Link></header>
           <div className={styles.welcome}>
             <div className={styles.welcomeCopy}>
               <div className={styles.featureIcon}><Users size={31} /></div>
@@ -137,7 +137,7 @@ export default async function TeamPage({ searchParams }: { searchParams: Promise
     <main className={styles.page} lang="zh-CN">
       <div className={styles.shell}>
         <header className={styles.topbar}>
-          <Link href="/" className={styles.brand}><Image src="/brand/roxy-career.svg" width={35} height={35} alt="" />萤火职航</Link>
+          <Link href="/" className={styles.brand}><Image src="/brand/firefly-mark.png" width={40} height={40} alt="" unoptimized />萤火职航</Link>
           <div className={styles.account}><span>{actor.displayName} · {teamRoles[actor.role]}</span><form action={logoutTeamAction}><button className={styles.secondary}>退出登录</button></form></div>
         </header>
         <section className={styles.hero}>
