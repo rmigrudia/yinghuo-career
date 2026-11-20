@@ -133,7 +133,7 @@
       "encrypted": "API keys are encrypted locally"
     },
     "topbar": {
-      "upstream": "Upstream open-source project (LuJie CareerKit)",
+      "projectSource": "Firefly Career source code",
       "notifications": "Follow-up reminders",
       "guide": "Getting started",
       "profile": "Local account",

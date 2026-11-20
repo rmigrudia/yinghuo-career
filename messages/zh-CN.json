@@ -133,7 +133,7 @@
       "encrypted": "API Key 本机加密保存"
     },
     "topbar": {
-      "upstream": "上游开源项目（录阶）",
+      "projectSource": "萤火职航源码",
       "notifications": "跟进提醒",
       "guide": "新手引导",
       "profile": "本地账户",
