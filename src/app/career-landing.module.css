@@ -51,7 +51,9 @@
 }
 
 .brand { justify-self: start; font-size: 21px; font-weight: 700; letter-spacing: -.04em; }
-.brand img { border-radius: 8px; }
+.brand img { flex: none; }
+.brandWordmark { display: grid; gap: 3px; line-height: 1; white-space: nowrap; }
+.brandEnglish { font-size: 8px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
 .brandChinese { font-size: 16px; letter-spacing: .06em; }
 .navLinks { gap: clamp(25px, 4vw, 58px); font-size: 14px; }
 .navLinks a { border-bottom: 1px solid transparent; padding-block: 5px; transition: border-color .25s; }

@@ -74,7 +74,7 @@ function CloudCareer() {
     <div className={theme.workspace}>
       <header className="cloud-topbar" data-workspace-chrome="toolbar">
         <div>
-          <a href="/" className="cloud-brand"><img src="/brand/roxy-career.svg" alt="" width={34} height={34} />萤火职航</a>
+          <a href="/" className="cloud-brand"><img src="/brand/firefly-mark.png" alt="" width={38} height={38} />萤火职航</a>
           <nav aria-label="云端导航">
             <a href="/#cities"><ArrowLeft size={15} aria-hidden /> 探索城市</a>
             <a href="/campus" aria-current="page"><Building2 size={16} aria-hidden /> 校招信息库</a>
